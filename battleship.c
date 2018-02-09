@@ -18,7 +18,7 @@
 #define WRONG_PLACEMENT "Ship can't be placed here,as it goes out of bounds or overrides another ship\n"
 #define ALREADY_SHOT "This cell has already been shot\n"
 
-// SOCKETS
+// SOCKETS PART
 
 void error(const char *msg){
 	perror(msg);
@@ -90,9 +90,9 @@ int prepareServerSocket(int sock){
 	return sock;
 }
 
-// END SOCKETS
+// END OF SOCKETS PART
 
-// GAME
+// GAME PART
 
 void displayGridsHeader()
 {
@@ -146,6 +146,7 @@ int tryToPlace(int placeShipHorizontaly, int line, int column, int shipSize, cha
 {
     line -= 1;
     line = (line == -1) ? 9 : line;
+
     //Check if ship goes out of bounds
     int maxColumnOrLinePlace = 10 - shipSize;
 
@@ -153,9 +154,9 @@ int tryToPlace(int placeShipHorizontaly, int line, int column, int shipSize, cha
 
         if(column > maxColumnOrLinePlace) return 1;
 
-        // Traitement horizontal
+        // Horizontal check
 
-        // Checker que les cases sont libres
+        // Check if cells are free
         for(int i=column; i<column+shipSize; i++){
             if(mainBoard[line][i] != '~') return 1;
         }
@@ -169,8 +170,9 @@ int tryToPlace(int placeShipHorizontaly, int line, int column, int shipSize, cha
     {
         if(line > maxColumnOrLinePlace) return 1;
 
-        // Traitement vertical
-        // Checker que les cases sont vides
+        // Vertical check
+
+	// Check cells are free
 
         for(int i=line; i<line+shipSize; i++)
         {
@@ -181,7 +183,6 @@ int tryToPlace(int placeShipHorizontaly, int line, int column, int shipSize, cha
         {
             mainBoard[i][column] = shipSymbol;
         }
-        // Inscrire les symboles
     }
 
     return 0;
@@ -297,7 +298,7 @@ void fireOpponent(char mainBoard[10][10], char markBoard[10][10], int sock, int 
 
             if((column >= 'a' && column <= 'j') || (column >= 'A' && column <= 'J'))
             {
-				// COORDINATES ARE VALID HERE
+		
                 int c = (column >= 'a' && column <= 'j') ? column - 'a' : column - 'A';
 
 				// Check if coordinates designate an already shot place
@@ -370,7 +371,7 @@ void dealWithOpponentFire(int sock, char mainBoard[10][10], int *ownShipsTouched
 	write(sock, fireResponse, 1);
 }
 
-// END GAME
+// END OF GAME PART
 
 int main()
 {
@@ -430,7 +431,7 @@ int main()
 	{
 		fireOpponent(mainBoard, markBoard, sock, opponentShipsTouched);
 		if(!gameIsRunning(ownShipsTouched, opponentShipsTouched)) break;	//Check if game is still running
-		dealWithOpponentFire(sock, mainBoard, ownShipsTouched); //Read its fire, compute, return result
+		dealWithOpponentFire(sock, mainBoard, ownShipsTouched); //Read opponent fire, compute, return result
 	}
 
 	if(*ownShipsTouched == SHIP_CELLS_NUM){
